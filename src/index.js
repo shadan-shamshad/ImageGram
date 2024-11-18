@@ -5,10 +5,11 @@ import multer from 'multer';
 import { isAuthenticated } from './middlewares/authMiddleware.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
-import { options } from './utils/swaggerOptions.js'
+import { options } from './utils/swaggerOptions.js';
+import ip from 'ip';
 
 const PORT = 3000;  // port number
-const swaggerDocs = swaggerJSDoc(options);
+
 const app = express();  // create express app server instance
 
 const upload = multer(); // multer instance
@@ -17,16 +18,17 @@ app.use(express.json()); //middleware to parse json data
 app.use(express.text());
 app.use(express.urlencoded());
 
+const swaggerDocs = swaggerJSDoc(options);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use('/api', apiRouter); // if the URL starts with /api, then the request is forwarded to the apiRouter
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.get('/ping', isAuthenticated, (req,res) => {
     console.log(req.query);
     console.log(req.body);
     console.log(req.user);
-    return res.json({message: 'It is pong' });
+    const ipaddr = ip.address();
+    return res.json({message: 'It is pong' + ipaddr });
 });
 
 //app.get('/ping/:name/:id', (req,res) => {
@@ -78,4 +80,8 @@ app.listen(PORT, ()=> {
     connectDB();
 });
 
-// SIGNUP => SCHEMA -> repository -> service -> controller -> validation -> routers
+// SIGNUP => SCHEMA -> repository -> service -> controller -> validation -> routers 
+
+// client ----> LB  -----> server1
+// client ----> LB  -----> server2
+
