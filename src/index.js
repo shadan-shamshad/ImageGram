@@ -1,11 +1,11 @@
 import express from 'express';
 import connectDB from './config/dbConfig.js';
-import apiRouter from '../router/apiRouter.js';
+//import apiRouter from '../router/apiRouter.js';
 import multer from 'multer';
 import { isAuthenticated } from './middlewares/authMiddleware.js';
-import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUI from 'swagger-ui-express';
-import { options } from './utils/swaggerOptions.js';
+//import swaggerJSDoc from 'swagger-jsdoc';
+//import swaggerUI from 'swagger-ui-express';
+//import { options } from './utils/swaggerOptions.js';
 import ip from 'ip';
 
 const PORT = 3000;  // port number
@@ -18,10 +18,10 @@ app.use(express.json()); //middleware to parse json data
 app.use(express.text());
 app.use(express.urlencoded());
 
-const swaggerDocs = swaggerJSDoc(options);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+//const swaggerDocs = swaggerJSDoc(options);
+//app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-app.use('/api', apiRouter); // if the URL starts with /api, then the request is forwarded to the apiRouter
+//app.use('/api', apiRouter); // if the URL starts with /api, then the request is forwarded to the apiRouter
 
 app.get('/ping', isAuthenticated, (req,res) => {
     console.log(req.query);
@@ -83,5 +83,6 @@ app.listen(PORT, ()=> {
 // SIGNUP => SCHEMA -> repository -> service -> controller -> validation -> routers 
 
 // client ----> LB  -----> server1
-// client ----> LB  -----> server2
+// client ----> LB(Nginx) -----> server2
+// Amazon Elastic Load Balancer
 
